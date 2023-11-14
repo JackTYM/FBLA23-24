@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using cakeslice;
+using UnityFx.Outline;
 
 public class SceneController : MonoBehaviour
 {
-    public List<GameObject> outlines = new List<GameObject>();
+    public List<OutlineBehaviour> outlines = new List<OutlineBehaviour>();
     public GameObject playerObject;
     public float coneRadius = 1.0f;
+
+    private DialogManager dm;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        dm = GetComponent<DialogManager>();
     }
 
     // Update is called once per frame
@@ -25,18 +27,40 @@ public class SceneController : MonoBehaviour
         Vector3 rayDirection = playerObject.transform.GetChild(0).transform.TransformDirection(Vector3.forward);
         if (Physics.SphereCast(playerObject.transform.position, coneRadius, rayDirection, out hit, 3, layerMask))
         {
-            hit.transform.gameObject.GetComponent<Outline>().enabled = true;
+            //hit.transform.gameObject.GetComponent<OutlineBehavior>().enabled = true;
 
             if (Input.GetKeyDown(KeyCode.E))
             {
                 if (hit.transform.gameObject.tag == "KeyItem")
                 {
                     hit.transform.gameObject.SetActive(false);
+
+                    NPCHandler edward = GameObject.Find("Edward").GetComponentInChildren<NPCHandler>();
+                    List<string> preDialog = new List<string>{edward.dialogStrings[edward.dialogStrings.Count - 1]};
+
+                    if (hit.transform.gameObject.name == "Key") {
+                        preDialog[0] = preDialog[0].Replace(",", "");
+                        preDialog[0] = preDialog[0].Replace("Key ", "");
+                    } else if (hit.transform.gameObject.name == "Keycard") {
+                        preDialog[0] = preDialog[0].Replace("Keycard", "");
+                        preDialog[0] = preDialog[0].Replace(",", "");
+                    }
+                    if (preDialog[0] == "I need: ") {
+                        preDialog = new List<string>{"Thanks!"};
+                    }
+                    edward.dialogStrings = preDialog;
+                    edward.dialog = new Dialog(edward.dialog.CharacterName, edward.dialogStrings);
                 }
                 else if (hit.transform.gameObject.tag == "NPC")
                 {
-                    GetComponent<DialogManager>().SetDialog(hit.transform.gameObject.GetComponent<NPCHandler>().dialog);
+                    dm.SetDialog(hit.transform.gameObject.GetComponent<NPCHandler>().dialog);
                 }
+            }
+        } else {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                dm.dialogBox.gameObject.SetActive(false);
+                dm.currentDialog = null;
             }
         }
 
@@ -44,9 +68,10 @@ public class SceneController : MonoBehaviour
 
         foreach (GameObject item in outlines)
         {
-            if (hit.transform == null || hit.transform.gameObject != item)
+                item.GetComponent<OutlineBehaviour>().enabled = false;
+            if (hit.transform == null || hit.transform.gameObject != item || Vector3.Distance(item.transform.position, playerObject.transform.position) > 3)
             {
-                item.GetComponent<Outline>().enabled = false;
+                item.GetComponent<OutlineBehaviour>().enabled = false;
             }
         }
     }
