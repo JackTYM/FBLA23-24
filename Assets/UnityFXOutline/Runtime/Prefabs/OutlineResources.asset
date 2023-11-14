@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8de35dc0ee6a2429f995e9b330bbc1d0, type: 3}
+  m_Script: {fileID: 11500000, guid: b503341e0a514e3489c4851727e68257, type: 3}
   m_Name: OutlineResources
   m_EditorClassIdentifier: 
-  _renderShader: {fileID: 4800000, guid: acc0385c63d555f1582979b101ea7d57, type: 3}
-  _outlineShader: {fileID: 4800000, guid: d0dfad1490d046af39292509631a7235, type: 3}
+  _renderShader: {fileID: 4800000, guid: ac20fbf75bafe454aba5ef3c098349df, type: 3}
+  _outlineShader: {fileID: 4800000, guid: 41c9acbf41c8245498ac9beab378de12, type: 3}
+  _enableInstancing: 0

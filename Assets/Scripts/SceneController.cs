@@ -24,10 +24,11 @@ public class SceneController : MonoBehaviour
         int layerMask = 1 << 6;
 
         RaycastHit hit;
+        GameObject lastHit = null;
         Vector3 rayDirection = playerObject.transform.GetChild(0).transform.TransformDirection(Vector3.forward);
         if (Physics.SphereCast(playerObject.transform.position, coneRadius, rayDirection, out hit, 3, layerMask))
         {
-            //hit.transform.gameObject.GetComponent<OutlineBehavior>().enabled = true;
+            lastHit = hit.transform.gameObject;
 
             if (Input.GetKeyDown(KeyCode.E))
             {
@@ -66,12 +67,13 @@ public class SceneController : MonoBehaviour
 
         Debug.DrawLine(playerObject.transform.position, playerObject.transform.position + rayDirection.normalized * 3, Color.red, 0.1f);
 
-        foreach (GameObject item in outlines)
+        foreach (OutlineBehaviour outline in outlines)
         {
-                item.GetComponent<OutlineBehaviour>().enabled = false;
-            if (hit.transform == null || hit.transform.gameObject != item || Vector3.Distance(item.transform.position, playerObject.transform.position) > 3)
+            if (hit.transform != null && hit.transform.gameObject == outline.gameObject) {
+                outline.enabled = true;
+            } else if (hit.transform == null || hit.transform.gameObject != outline.gameObject || Vector3.Distance(outline.transform.position, playerObject.transform.position) > 3)
             {
-                item.GetComponent<OutlineBehaviour>().enabled = false;
+                outline.enabled = false;
             }
         }
     }
